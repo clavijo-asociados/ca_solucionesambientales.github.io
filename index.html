@@ -70,25 +70,27 @@
             color: var(--gray-900);
         }
 
-        .logo-container {
-            width: 55px;
-            height: 55px;
-            margin-right: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, var(--primary-blue), var(--primary-green));
-            border-radius: 12px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 4px 20px rgba(37, 99, 235, 0.2);
-        }
+       .logo-container {
+    width: 55px;
+    height: 55px;
+    margin-right: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--primary-blue), var(--primary-green));
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(37, 99, 235, 0.2);
+}
 
-        .logo-container::before {
-            content: '🌿';
-            font-size: 28px;
-            color: white;
-        }
+       .logo-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Mantiene las proporciones sin recortar */
+    padding: 8px; /* Espacio interno para que no toque los bordes */
+    border-radius: 8px;
+}
 
         .brand-text {
             font-weight: 800;
@@ -749,7 +751,9 @@
     <header>
         <nav class="container">
             <a href="#inicio" class="brand">
-                <div class="logo-container"></div>
+               <div class="logo-container">
+    <img src="images/logo.jpg" alt="Logo C&A Clavijo y Asociados" loading="lazy">
+</div>
                 <div>
                     <div class="brand-text">C&A - CLAVIJO Y ASOCIADOS</div>
                     <span class="brand-subtitle">Cumplir, proteger y prosperar juntos</span>
