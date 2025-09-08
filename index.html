@@ -743,6 +743,37 @@
             opacity: 0;
             animation: fadeInUp 1s ease forwards;
         }
+
+        /* HERO media: contenedor con recorte y sombra (sin "caja" extra) */
+.hero-image-container{
+  position: relative;
+  overflow: hidden;                 /* recorta cualquier exceso */
+  border-radius: 20px;              /* bordes redondeados como te gustaban */
+  box-shadow: 0 10px 30px rgba(37,99,235,.15);
+  background: transparent;          /* nos aseguramos que no tenga fondo */
+  border: 0;                        /* ni bordes visibles detrás */
+}
+
+/* Imagen del héroe: proporción correcta por defecto (móvil) */
+.hero-cover{
+  width: 100%;
+  height: auto;                     /* mantiene la proporción original */
+  display: block;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Desktop: hazla MÁS GRANDE sin deformar */
+@media (min-width: 1024px){
+  /* dale un poco más de espacio a la columna derecha del héroe */
+  .hero-content{ grid-template-columns: 0.9fr 1.1fr; }
+
+  /* aumenta la altura visual de la imagen de forma responsiva */
+  .hero-cover{
+    height: clamp(420px, 48vw, 720px);  /* crece con el ancho de pantalla */
+  }
+}
+
     </style>
 </head>
 <body>
@@ -801,11 +832,13 @@
                     </div>
                 </div>
 
- <div class="hero-image-container">
-  <img src="images/hero.jpg"
-       alt="Equipo C&A trabajando en capacitaciones ambientales"
-       style="width: 150%; height: 600px; object-fit: cover; object-position: center; border-radius: 20px; box-shadow: 0 10px 30px rgba(37, 99, 235, 0.15); display: block;">
+<div class="hero-image-container">
+  <img
+    src="images/hero.jpg"
+    alt="Equipo C&A trabajando en capacitaciones ambientales"
+    class="hero-cover">
 </div>
+
                 </div>
             </div>
         </div>
