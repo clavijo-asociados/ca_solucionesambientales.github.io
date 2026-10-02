@@ -30,35 +30,68 @@ if (!reduceMotion.matches && 'IntersectionObserver' in window) {
 }
 reduceMotion.addEventListener('change', e => { if (e.matches) document.documentElement.classList.remove('motion'); });
 
-const video = document.getElementById('landscape-video');
-if (video) {
-  const section = video.closest('.vision');
-  const panel = section.querySelector('.vision-video');
-  const close = section.querySelector('.close-video');
-  const errorMessage = section.querySelector('.video-error');
-  const source = video.querySelector('source');
-  let trigger;
-  const hideVideo = () => {
-    video.pause();
-    panel.hidden = true;
-    section.classList.remove('is-playing');
-    if (trigger) trigger.focus({ preventScroll: true });
+const heroVideo = document.querySelector('.hero-video');
+const heroMotionControl = document.querySelector('[data-hero-motion]');
+if (heroVideo && heroMotionControl) {
+  const heroSource = heroVideo.querySelector('source');
+  const motionLabel = heroMotionControl.querySelector('[data-hero-motion-label]');
+  const motionSymbol = heroMotionControl.querySelector('.hero-motion-symbol');
+  let pausedByVisitor = reduceMotion.matches;
+
+  const updateMotionControl = () => {
+    const paused = heroVideo.paused;
+    heroMotionControl.setAttribute('aria-pressed', String(paused));
+    motionLabel.textContent = paused ? 'Reproducir video' : 'Pausar video';
+    motionSymbol.textContent = paused ? '▶' : 'Ⅱ';
   };
-  section.querySelectorAll('[data-play-video]').forEach(button => button.addEventListener('click', async () => {
-    trigger = button;
-    if (!source.getAttribute('src')) { source.src = source.dataset.src; video.load(); }
-    panel.hidden = false;
-    section.classList.add('is-playing');
-    errorMessage.hidden = true;
-    close.focus({ preventScroll: true });
-    try { await video.play(); } catch (_) { errorMessage.hidden = false; }
-  }));
-  const showVideoError = () => { errorMessage.hidden = false; };
-  video.addEventListener('error', showVideoError);
-  source.addEventListener('error', showVideoError);
-  close.addEventListener('click', hideVideo);
-  document.addEventListener('keydown', event => { if (event.key === 'Escape' && !panel.hidden) hideVideo(); });
-  document.addEventListener('visibilitychange', () => { if (document.hidden) video.pause(); });
+
+  const enableVideo = async () => {
+    heroVideo.hidden = false;
+    heroMotionControl.hidden = false;
+    if (reduceMotion.matches || pausedByVisitor) {
+      heroVideo.pause();
+      updateMotionControl();
+      return;
+    }
+    try { await heroVideo.play(); } catch (_) { updateMotionControl(); }
+  };
+
+  heroVideo.addEventListener('canplay', enableVideo, { once: true });
+  heroVideo.addEventListener('play', updateMotionControl);
+  heroVideo.addEventListener('pause', updateMotionControl);
+  const showHeroFallback = () => {
+    heroVideo.hidden = true;
+    heroMotionControl.hidden = true;
+  };
+  heroVideo.addEventListener('error', showHeroFallback);
+  heroSource?.addEventListener('error', showHeroFallback);
+  heroMotionControl.addEventListener('click', async () => {
+    if (heroVideo.paused) {
+      pausedByVisitor = false;
+      try { await heroVideo.play(); } catch (_) { updateMotionControl(); }
+      updateMotionControl();
+    } else {
+      pausedByVisitor = true;
+      heroVideo.pause();
+      updateMotionControl();
+    }
+  });
+  reduceMotion.addEventListener('change', event => {
+    if (event.matches) {
+      pausedByVisitor = true;
+      heroVideo.pause();
+    }
+    updateMotionControl();
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) heroVideo.pause();
+    else if (!pausedByVisitor && !reduceMotion.matches) heroVideo.play().catch(() => {});
+  });
+  if (heroVideo.error || heroVideo.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) {
+    showHeroFallback();
+  } else if (heroVideo.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) {
+    enableVideo();
+  }
 }
 
 document.querySelectorAll('[data-service]').forEach(link => link.addEventListener('click', () => {
