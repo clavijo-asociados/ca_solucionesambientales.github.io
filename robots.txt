@@ -1,2 +1,6 @@
+# Información orientativa del proyecto GitHub Pages. En GitHub Pages de proyecto,
+# robots.txt efectivo se consulta en la raiz del host github.io, no en esta ruta.
 User-agent: *
-Disallow: /
+Allow: /
+
+Sitemap: https://clavijo-asociados.github.io/ca_solucionesambientales.github.io/sitemap.xml
